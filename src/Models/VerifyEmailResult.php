@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Mailrify\Models;
 
-final readonly class VerifyEmailResult
+final class VerifyEmailResult
 {
     /**
      * @param list<string> $reasons

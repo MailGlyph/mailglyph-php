@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Mailrify\Models;
 
-final readonly class Campaign
+final class Campaign
 {
     /**
      * @param array<string, mixed>|null $audienceCondition

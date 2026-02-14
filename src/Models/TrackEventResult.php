@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Mailrify\Models;
 
-final readonly class TrackEventResult
+final class TrackEventResult
 {
     public function __construct(
         public string $contact,

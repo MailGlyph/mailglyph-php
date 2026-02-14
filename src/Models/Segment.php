@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Mailrify\Models;
 
-final readonly class Segment
+final class Segment
 {
     /**
      * @param array<string, mixed> $condition

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Mailrify\Models;
 
-final readonly class SendEmailResult
+final class SendEmailResult
 {
     /**
      * @param array<int, array<string, mixed>> $emails

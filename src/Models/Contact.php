@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Mailrify\Models;
 
-final readonly class Contact
+final class Contact
 {
     /**
      * @param array<string, mixed> $data
