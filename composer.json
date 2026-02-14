@@ -1,7 +1,6 @@
 {
   "name": "mailrify/mailrify-php",
   "description": "Official Mailrify PHP SDK",
-  "version": "0.2.0",
   "type": "library",
   "license": "MIT",
   "require": {
