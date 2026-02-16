@@ -4,3 +4,4 @@
 /.phpstan.cache/
 
 .env.test
+docs/*.md
