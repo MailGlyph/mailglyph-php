@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.1](https://github.com/Mailrify/mailrify-php/compare/v1.0.0...v1.0.1) (2026-02-16)
+
+
+### Bug Fixes
+
+* disable component prefix in release tags ([f48ed88](https://github.com/Mailrify/mailrify-php/commit/f48ed88e429cf7854bc7b03d90056c4b19c0f5cb))
+
 ## [1.0.0](https://github.com/Mailrify/mailrify-php/compare/mailrify-php-0.2.0...mailrify-php-1.0.0) (2026-02-16)
 
 
