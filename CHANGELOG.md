@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.1.0](https://github.com/Mailrify/mailrify-php/compare/v1.0.1...v1.1.0) (2026-02-16)
+
+
+### Features
+
+* Add `RELEASE_PLEASE_TOKEN` to the release-please workflow. ([ab01858](https://github.com/Mailrify/mailrify-php/commit/ab0185870d634fbff9e7c368395d4879246226d6))
+
+
+### Miscellaneous Chores
+
+* stop tracking docs markdown files ([30f0d97](https://github.com/Mailrify/mailrify-php/commit/30f0d974da200b11e940789a52c741fa8509d8c8))
+
 ## [1.0.1](https://github.com/Mailrify/mailrify-php/compare/v1.0.0...v1.0.1) (2026-02-16)
 
 
