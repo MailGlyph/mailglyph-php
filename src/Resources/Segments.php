@@ -92,6 +92,39 @@ final class Segments
     }
 
     /**
+     * @param list<string> $emails
+     * @return array{added: int, notFound: list<string>}
+     */
+    public function addStaticMembers(string $id, array $emails): array
+    {
+        $response = $this->httpClient->request('POST', sprintf('/segments/%s/members', rawurlencode($id)), [
+            'json' => ['emails' => array_values($emails)],
+        ]);
+
+        $notFound = $response['notFound'] ?? [];
+
+        return [
+            'added' => (int) ($response['added'] ?? 0),
+            'notFound' => is_array($notFound) ? array_values(array_map('strval', $notFound)) : [],
+        ];
+    }
+
+    /**
+     * @param list<string> $emails
+     * @return array{removed: int}
+     */
+    public function removeStaticMembers(string $id, array $emails): array
+    {
+        $response = $this->httpClient->request('DELETE', sprintf('/segments/%s/members', rawurlencode($id)), [
+            'json' => ['emails' => array_values($emails)],
+        ]);
+
+        return [
+            'removed' => (int) ($response['removed'] ?? 0),
+        ];
+    }
+
+    /**
      * @param array<string, mixed> $params
      * @return array<string, mixed>
      */

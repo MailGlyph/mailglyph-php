@@ -44,7 +44,25 @@ $sendResult = $client->emails->send([
     'from' => ['name' => 'My App', 'email' => 'hello@myapp.com'],
     'subject' => 'Welcome!',
     'body' => '<h1>Hello {{name}}</h1>',
+    'text' => 'Hello {{name}}',
     'data' => ['name' => 'John'],
+]);
+
+// HTML only (plain text auto-generated from body)
+$client->emails->send([
+    'to' => 'user@example.com',
+    'from' => 'hello@myapp.com',
+    'subject' => 'HTML only',
+    'body' => '<h1>Hello</h1><p>This uses auto-generated text/plain.</p>',
+]);
+
+// HTML + text="" (opt out of text/plain part)
+$client->emails->send([
+    'to' => 'user@example.com',
+    'from' => 'hello@myapp.com',
+    'subject' => 'No text/plain',
+    'body' => '<h1>Hello</h1><p>This is HTML only.</p>',
+    'text' => '',
 ]);
 
 // Verify email

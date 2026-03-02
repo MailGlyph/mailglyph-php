@@ -123,6 +123,67 @@ final class EmailsTest extends TestCase
         self::assertSame('invoice.pdf', $payload['attachments'][0]['filename']);
     }
 
+    public function testSendIncludesTextWhenProvided(): void
+    {
+        $history = [];
+        $client = $this->buildHttpClient('sk_test', [
+            new Response(200, [], json_encode(['success' => true, 'data' => ['emails' => []]], JSON_THROW_ON_ERROR)),
+        ], $history);
+
+        $emails = new Emails($client);
+        $emails->send([
+            'to' => 'user@example.com',
+            'from' => 'hello@example.com',
+            'subject' => 'Hello',
+            'body' => '<p>Hi</p>',
+            'text' => 'Hi',
+        ]);
+
+        $payload = $this->getRequestJson($history);
+        self::assertArrayHasKey('text', $payload);
+        self::assertSame('Hi', $payload['text']);
+    }
+
+    public function testSendOmitsTextWhenNotProvided(): void
+    {
+        $history = [];
+        $client = $this->buildHttpClient('sk_test', [
+            new Response(200, [], json_encode(['success' => true, 'data' => ['emails' => []]], JSON_THROW_ON_ERROR)),
+        ], $history);
+
+        $emails = new Emails($client);
+        $emails->send([
+            'to' => 'user@example.com',
+            'from' => 'hello@example.com',
+            'subject' => 'Hello',
+            'body' => '<p>Hi</p>',
+        ]);
+
+        $payload = $this->getRequestJson($history);
+        self::assertArrayNotHasKey('text', $payload);
+    }
+
+    public function testSendKeepsEmptyTextStringForOptOut(): void
+    {
+        $history = [];
+        $client = $this->buildHttpClient('sk_test', [
+            new Response(200, [], json_encode(['success' => true, 'data' => ['emails' => []]], JSON_THROW_ON_ERROR)),
+        ], $history);
+
+        $emails = new Emails($client);
+        $emails->send([
+            'to' => 'user@example.com',
+            'from' => 'hello@example.com',
+            'subject' => 'Hello',
+            'body' => '<p>Hi</p>',
+            'text' => '',
+        ]);
+
+        $payload = $this->getRequestJson($history);
+        self::assertArrayHasKey('text', $payload);
+        self::assertSame('', $payload['text']);
+    }
+
     public function testSendThrowsValidationException(): void
     {
         $this->expectException(ValidationException::class);

@@ -199,4 +199,48 @@ final class SegmentsTest extends TestCase
         self::assertSame('2', $query['page']);
         self::assertSame('5', $query['pageSize']);
     }
+
+    public function testAddStaticMembers(): void
+    {
+        $history = [];
+        $client = $this->buildHttpClient('sk_test', [
+            new Response(200, [], json_encode([
+                'added' => 2,
+                'notFound' => ['missing@example.com'],
+            ], JSON_THROW_ON_ERROR)),
+        ], $history);
+
+        $segments = new Segments($client);
+        $result = $segments->addStaticMembers('seg_1', ['alice@example.com', 'bob@example.com']);
+
+        $request = $history[0]['request'];
+        $payload = $this->getRequestJson($history);
+
+        self::assertSame('POST', $request->getMethod());
+        self::assertSame('/segments/seg_1/members', $request->getUri()->getPath());
+        self::assertSame(['alice@example.com', 'bob@example.com'], $payload['emails']);
+        self::assertSame(2, $result['added']);
+        self::assertSame(['missing@example.com'], $result['notFound']);
+    }
+
+    public function testRemoveStaticMembers(): void
+    {
+        $history = [];
+        $client = $this->buildHttpClient('sk_test', [
+            new Response(200, [], json_encode([
+                'removed' => 1,
+            ], JSON_THROW_ON_ERROR)),
+        ], $history);
+
+        $segments = new Segments($client);
+        $result = $segments->removeStaticMembers('seg_1', ['alice@example.com']);
+
+        $request = $history[0]['request'];
+        $payload = $this->getRequestJson($history);
+
+        self::assertSame('DELETE', $request->getMethod());
+        self::assertSame('/segments/seg_1/members', $request->getUri()->getPath());
+        self::assertSame(['alice@example.com'], $payload['emails']);
+        self::assertSame(1, $result['removed']);
+    }
 }
