@@ -31,7 +31,9 @@ final class Emails
      * } $params
      *
      * The plain text version of the message.
-     * If not provided, the `body` will be used to generate a plain text version. You can opt out of this behavior by setting value to an empty string.
+     * If not provided, the `body` will be used to generate a plain text
+     * version. You can opt out of this behavior by setting value to an empty
+     * string.
      */
     public function send(array $params): SendEmailResult
     {
