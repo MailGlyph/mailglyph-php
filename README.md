@@ -142,6 +142,18 @@ $updatedSegment = $client->segments->update($segment->id, [
 
 $members = $client->segments->listContacts($segment->id, ['page' => 1, 'pageSize' => 20]);
 
+// Static segment membership management
+$addResult = $client->segments->addStaticMembers($segment->id, [
+    'alice@example.com',
+    'bob@example.com',
+]);
+// ['added' => 2, 'notFound' => []]
+
+$removeResult = $client->segments->removeStaticMembers($segment->id, [
+    'alice@example.com',
+]);
+// ['removed' => 1]
+
 $client->segments->delete($segment->id);
 ```
 
