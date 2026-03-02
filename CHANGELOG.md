@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.2.0](https://github.com/Mailrify/mailrify-php/compare/v1.1.0...v1.2.0) (2026-03-02)
+
+
+### Features
+
+* Add `text` field to email sending parameters. ([beb84a9](https://github.com/Mailrify/mailrify-php/commit/beb84a994b1eecc74cc56761c8a422a8736fe5dc))
+* Implement methods to add and remove contacts from static segments, along with supporting types and documentation. ([2fb5ddf](https://github.com/Mailrify/mailrify-php/commit/2fb5ddf62232b7daf26202b6fb99849c1df94cd8))
+
+
+### Miscellaneous Chores
+
+* Split a long PHPDoc comment line for improved readability. ([08a5015](https://github.com/Mailrify/mailrify-php/commit/08a5015cb81ea7becbb5012bd3b6ddf8c0856522))
+
 ## [1.1.0](https://github.com/Mailrify/mailrify-php/compare/v1.0.1...v1.1.0) (2026-02-16)
 
 
