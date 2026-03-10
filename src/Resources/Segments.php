@@ -23,7 +23,7 @@ final class Segments
 
         return array_values(array_map(
             static fn(mixed $item): Segment => Segment::fromArray(is_array($item) ? $item : []),
-            is_array($response) ? $response : []
+            $response
         ));
     }
 

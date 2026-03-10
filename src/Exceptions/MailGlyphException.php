@@ -12,6 +12,9 @@ class MailGlyphException extends RuntimeException
     /** @var array<string, mixed> */
     private array $errorData;
 
+    /**
+     * @param array<string, mixed> $errorData
+     */
     public function __construct(
         string $message,
         private readonly ?int $statusCode = null,

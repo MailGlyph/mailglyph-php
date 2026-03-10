@@ -72,6 +72,11 @@ trait CreatesHttpClient
         $query = $history[$index]['request']->getUri()->getQuery();
         parse_str($query, $params);
 
-        return is_array($params) ? $params : [];
+        $normalized = [];
+        foreach ($params as $key => $value) {
+            $normalized[(string) $key] = $value;
+        }
+
+        return $normalized;
     }
 }

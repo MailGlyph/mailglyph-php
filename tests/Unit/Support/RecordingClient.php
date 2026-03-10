@@ -19,11 +19,17 @@ final class RecordingClient implements ClientInterface
     {
     }
 
+    /**
+     * @param array<string, mixed> $options
+     */
     public function send(RequestInterface $request, array $options = []): ResponseInterface
     {
         throw new \BadMethodCallException('Not used in tests.');
     }
 
+    /**
+     * @param array<string, mixed> $options
+     */
     public function sendAsync(RequestInterface $request, array $options = []): PromiseInterface
     {
         throw new \BadMethodCallException('Not used in tests.');
@@ -50,7 +56,6 @@ final class RecordingClient implements ClientInterface
     }
 
     /**
-     * @param string|\Psr\Http\Message\UriInterface $uri
      * @param array<string, mixed> $options
      */
     public function get(string $uri, array $options = []): ResponseInterface
@@ -59,7 +64,6 @@ final class RecordingClient implements ClientInterface
     }
 
     /**
-     * @param string|\Psr\Http\Message\UriInterface $uri
      * @param array<string, mixed> $options
      */
     public function head(string $uri, array $options = []): ResponseInterface
@@ -68,7 +72,6 @@ final class RecordingClient implements ClientInterface
     }
 
     /**
-     * @param string|\Psr\Http\Message\UriInterface $uri
      * @param array<string, mixed> $options
      */
     public function put(string $uri, array $options = []): ResponseInterface
@@ -77,7 +80,6 @@ final class RecordingClient implements ClientInterface
     }
 
     /**
-     * @param string|\Psr\Http\Message\UriInterface $uri
      * @param array<string, mixed> $options
      */
     public function post(string $uri, array $options = []): ResponseInterface
@@ -86,7 +88,6 @@ final class RecordingClient implements ClientInterface
     }
 
     /**
-     * @param string|\Psr\Http\Message\UriInterface $uri
      * @param array<string, mixed> $options
      */
     public function patch(string $uri, array $options = []): ResponseInterface
@@ -95,7 +96,6 @@ final class RecordingClient implements ClientInterface
     }
 
     /**
-     * @param string|\Psr\Http\Message\UriInterface $uri
      * @param array<string, mixed> $options
      */
     public function delete(string $uri, array $options = []): ResponseInterface
@@ -104,7 +104,6 @@ final class RecordingClient implements ClientInterface
     }
 
     /**
-     * @param string|\Psr\Http\Message\UriInterface $uri
      * @param array<string, mixed> $options
      */
     public function options(string $uri, array $options = []): ResponseInterface

@@ -197,6 +197,7 @@ final class EmailsTest extends TestCase
 
         $emails = new Emails($client);
         $emails->send([
+            'to' => '',
             'from' => 'hello@example.com',
             'subject' => 'Missing recipient',
             'body' => '<p>Hi</p>',
