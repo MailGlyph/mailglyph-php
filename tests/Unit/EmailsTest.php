@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Mailrify\Tests\Unit;
+namespace MailGlyph\Tests\Unit;
 
 use GuzzleHttp\Psr7\Response;
-use Mailrify\Exceptions\ValidationException;
-use Mailrify\Resources\Emails;
+use MailGlyph\Exceptions\ValidationException;
+use MailGlyph\Resources\Emails;
 use PHPUnit\Framework\TestCase;
 
 final class EmailsTest extends TestCase
@@ -112,11 +112,13 @@ final class EmailsTest extends TestCase
             'from' => 'hello@example.com',
             'subject' => 'Invoice',
             'body' => '<p>Attached</p>',
-            'attachments' => [[
-                'filename' => 'invoice.pdf',
-                'content' => 'ZmFrZQ==',
-                'contentType' => 'application/pdf',
-            ]],
+            'attachments' => [
+                [
+                    'filename' => 'invoice.pdf',
+                    'content' => 'ZmFrZQ==',
+                    'contentType' => 'application/pdf',
+                ]
+            ],
         ]);
 
         $payload = $this->getRequestJson($history);

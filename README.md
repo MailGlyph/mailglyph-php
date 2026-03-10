@@ -1,9 +1,9 @@
-# Mailrify PHP SDK
+# MailGlyph PHP SDK
 
-[![CI](https://github.com/Mailrify/mailrify-php/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/Mailrify/mailrify-php/actions/workflows/ci.yml)
-[![Release Please](https://github.com/Mailrify/mailrify-php/actions/workflows/release-please.yml/badge.svg?branch=main)](https://github.com/Mailrify/mailrify-php/actions/workflows/release-please.yml)
+[![CI](https://github.com/MailGlyph/mailglyph-php/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/MailGlyph/mailglyph-php/actions/workflows/ci.yml)
+[![Release Please](https://github.com/MailGlyph/mailglyph-php/actions/workflows/release-please.yml/badge.svg?branch=main)](https://github.com/MailGlyph/mailglyph-php/actions/workflows/release-please.yml)
 
-Official Mailrify PHP SDK.
+Official MailGlyph PHP SDK.
 
 ## Requirements
 
@@ -12,7 +12,7 @@ Official Mailrify PHP SDK.
 ## Installation
 
 ```bash
-composer require mailrify/mailrify-php
+composer require mailglyph/mailglyph-php
 ```
 
 ## Initialization
@@ -22,13 +22,13 @@ composer require mailrify/mailrify-php
 
 declare(strict_types=1);
 
-use Mailrify\Mailrify;
+use MailGlyph\MailGlyph;
 
-$client = new Mailrify('sk_your_api_key');
+$client = new MailGlyph('sk_your_api_key');
 
 // Optional config
-$client = new Mailrify('sk_your_api_key', [
-    'baseUrl' => 'https://api.mailrify.com',
+$client = new MailGlyph('sk_your_api_key', [
+    'baseUrl' => 'https://api.mailglyph.com',
     'timeout' => 30000,
 ]);
 ```
@@ -76,10 +76,10 @@ var_dump($verification->isRandomInput);
 ```php
 <?php
 
-use Mailrify\Mailrify;
+use MailGlyph\MailGlyph;
 
 // Track event (public key only)
-$tracker = new Mailrify('pk_your_public_key');
+$tracker = new MailGlyph('pk_your_public_key');
 $trackResult = $tracker->events->track([
     'email' => 'user@example.com',
     'event' => 'purchase',
@@ -200,10 +200,10 @@ $client->campaigns->cancel($campaign->id);
 ```php
 <?php
 
-use Mailrify\Exceptions\AuthenticationException;
-use Mailrify\Exceptions\NotFoundException;
-use Mailrify\Exceptions\RateLimitException;
-use Mailrify\Exceptions\ValidationException;
+use MailGlyph\Exceptions\AuthenticationException;
+use MailGlyph\Exceptions\NotFoundException;
+use MailGlyph\Exceptions\RateLimitException;
+use MailGlyph\Exceptions\ValidationException;
 
 try {
     $client->contacts->get('missing-id');

@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Mailrify\Tests\Unit;
+namespace MailGlyph\Tests\Unit;
 
 use GuzzleHttp\Psr7\Response;
-use Mailrify\Exceptions\NotFoundException;
-use Mailrify\Exceptions\ValidationException;
-use Mailrify\Resources\Campaigns;
+use MailGlyph\Exceptions\NotFoundException;
+use MailGlyph\Exceptions\ValidationException;
+use MailGlyph\Resources\Campaigns;
 use PHPUnit\Framework\TestCase;
 
 final class CampaignsTest extends TestCase
@@ -19,14 +19,16 @@ final class CampaignsTest extends TestCase
         $history = [];
         $client = $this->buildHttpClient('sk_test', [
             new Response(200, [], json_encode([
-                'data' => [[
-                    'id' => 'cmp_1',
-                    'name' => 'Launch',
-                    'subject' => 'Hello',
-                    'audienceType' => 'ALL',
-                    'status' => 'DRAFT',
-                    'scheduledFor' => null,
-                ]],
+                'data' => [
+                    [
+                        'id' => 'cmp_1',
+                        'name' => 'Launch',
+                        'subject' => 'Hello',
+                        'audienceType' => 'ALL',
+                        'status' => 'DRAFT',
+                        'scheduledFor' => null,
+                    ]
+                ],
                 'page' => 1,
                 'pageSize' => 20,
                 'total' => 1,

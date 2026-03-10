@@ -1,6 +1,6 @@
 {
-  "name": "mailrify/mailrify-php",
-  "description": "Official Mailrify PHP SDK",
+  "name": "mailglyph/mailglyph-php",
+  "description": "Official MailGlyph PHP SDK",
   "type": "library",
   "license": "MIT",
   "require": {
@@ -15,12 +15,12 @@
   },
   "autoload": {
     "psr-4": {
-      "Mailrify\\": "src/"
+      "MailGlyph\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Mailrify\\Tests\\": "tests/"
+      "MailGlyph\\Tests\\": "tests/"
     }
   },
   "scripts": {

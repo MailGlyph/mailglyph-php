@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Mailrify\Resources;
+namespace MailGlyph\Resources;
 
-use Mailrify\HttpClient;
-use Mailrify\Models\Campaign;
+use MailGlyph\HttpClient;
+use MailGlyph\Models\Campaign;
 
 final class Campaigns
 {
@@ -26,7 +26,7 @@ final class Campaigns
 
         $campaignsPayload = is_array($response['data'] ?? null) ? $response['data'] : [];
         $campaigns = array_map(
-            static fn (mixed $item): Campaign => Campaign::fromArray(is_array($item) ? $item : []),
+            static fn(mixed $item): Campaign => Campaign::fromArray(is_array($item) ? $item : []),
             $campaignsPayload
         );
 
@@ -125,7 +125,7 @@ final class Campaigns
     {
         return array_filter(
             $params,
-            static fn (mixed $value): bool => $value !== null
+            static fn(mixed $value): bool => $value !== null
         );
     }
 }

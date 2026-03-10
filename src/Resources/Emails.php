@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Mailrify\Resources;
+namespace MailGlyph\Resources;
 
-use Mailrify\HttpClient;
-use Mailrify\Models\SendEmailResult;
-use Mailrify\Models\VerifyEmailResult;
+use MailGlyph\HttpClient;
+use MailGlyph\Models\SendEmailResult;
+use MailGlyph\Models\VerifyEmailResult;
 
 final class Emails
 {

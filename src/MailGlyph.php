@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Mailrify;
+namespace MailGlyph;
 
-use Mailrify\Resources\Campaigns;
-use Mailrify\Resources\Contacts;
-use Mailrify\Resources\Emails;
-use Mailrify\Resources\Events;
-use Mailrify\Resources\Segments;
+use MailGlyph\Resources\Campaigns;
+use MailGlyph\Resources\Contacts;
+use MailGlyph\Resources\Emails;
+use MailGlyph\Resources\Events;
+use MailGlyph\Resources\Segments;
 
-final class Mailrify
+final class MailGlyph
 {
     public readonly Emails $emails;
 

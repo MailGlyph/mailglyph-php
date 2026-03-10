@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Mailrify\Tests\Unit;
+namespace MailGlyph\Tests\Unit;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Middleware;
 use GuzzleHttp\Psr7\Response;
-use Mailrify\HttpClient;
+use MailGlyph\HttpClient;
 
 trait CreatesHttpClient
 {
@@ -32,7 +32,7 @@ trait CreatesHttpClient
 
         $client = new Client([
             'handler' => $stack,
-            'base_uri' => $config['baseUrl'] ?? 'https://api.mailrify.com',
+            'base_uri' => $config['baseUrl'] ?? 'https://api.mailglyph.com',
             'timeout' => 30,
         ]);
 

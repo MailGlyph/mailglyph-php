@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Mailrify\Resources;
+namespace MailGlyph\Resources;
 
-use Mailrify\HttpClient;
-use Mailrify\Models\Contact;
-use Mailrify\Models\Segment;
+use MailGlyph\HttpClient;
+use MailGlyph\Models\Contact;
+use MailGlyph\Models\Segment;
 
 final class Segments
 {
@@ -22,7 +22,7 @@ final class Segments
         $response = $this->httpClient->request('GET', '/segments');
 
         return array_values(array_map(
-            static fn (mixed $item): Segment => Segment::fromArray(is_array($item) ? $item : []),
+            static fn(mixed $item): Segment => Segment::fromArray(is_array($item) ? $item : []),
             is_array($response) ? $response : []
         ));
     }
@@ -78,7 +78,7 @@ final class Segments
 
         $contactsPayload = is_array($response['data'] ?? null) ? $response['data'] : [];
         $contacts = array_map(
-            static fn (mixed $item): Contact => Contact::fromArray(is_array($item) ? $item : []),
+            static fn(mixed $item): Contact => Contact::fromArray(is_array($item) ? $item : []),
             $contactsPayload
         );
 
@@ -132,7 +132,7 @@ final class Segments
     {
         return array_filter(
             $params,
-            static fn (mixed $value): bool => $value !== null
+            static fn(mixed $value): bool => $value !== null
         );
     }
 }

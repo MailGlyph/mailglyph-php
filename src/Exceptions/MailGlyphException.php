@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Mailrify\Exceptions;
+namespace MailGlyph\Exceptions;
 
 use RuntimeException;
 use Throwable;
 
-class MailrifyException extends RuntimeException
+class MailGlyphException extends RuntimeException
 {
     /** @var array<string, mixed> */
     private array $errorData;

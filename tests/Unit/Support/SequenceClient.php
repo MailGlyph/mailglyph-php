@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Mailrify\Tests\Unit\Support;
+namespace MailGlyph\Tests\Unit\Support;
 
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Promise\Create;

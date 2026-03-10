@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Mailrify\Tests\Unit;
+namespace MailGlyph\Tests\Unit;
 
 use GuzzleHttp\Psr7\Response;
-use Mailrify\Exceptions\NotFoundException;
-use Mailrify\Resources\Segments;
+use MailGlyph\Exceptions\NotFoundException;
+use MailGlyph\Resources\Segments;
 use PHPUnit\Framework\TestCase;
 
 final class SegmentsTest extends TestCase
@@ -157,14 +157,16 @@ final class SegmentsTest extends TestCase
         $history = [];
         $client = $this->buildHttpClient('sk_test', [
             new Response(200, [], json_encode([
-                'data' => [[
-                    'id' => 'ct_1',
-                    'email' => 'a@example.com',
-                    'subscribed' => true,
-                    'data' => [],
-                    'createdAt' => '2026-01-01T00:00:00Z',
-                    'updatedAt' => '2026-01-01T00:00:00Z',
-                ]],
+                'data' => [
+                    [
+                        'id' => 'ct_1',
+                        'email' => 'a@example.com',
+                        'subscribed' => true,
+                        'data' => [],
+                        'createdAt' => '2026-01-01T00:00:00Z',
+                        'updatedAt' => '2026-01-01T00:00:00Z',
+                    ]
+                ],
                 'total' => 1,
                 'page' => 1,
                 'pageSize' => 20,

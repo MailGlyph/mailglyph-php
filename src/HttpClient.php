@@ -2,24 +2,24 @@
 
 declare(strict_types=1);
 
-namespace Mailrify;
+namespace MailGlyph;
 
 use DateTimeImmutable;
 use GuzzleHttp\Client;
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Exception\RequestException;
-use Mailrify\Exceptions\ApiException;
-use Mailrify\Exceptions\AuthenticationException;
-use Mailrify\Exceptions\MailrifyException;
-use Mailrify\Exceptions\NotFoundException;
-use Mailrify\Exceptions\RateLimitException;
-use Mailrify\Exceptions\ValidationException;
+use MailGlyph\Exceptions\ApiException;
+use MailGlyph\Exceptions\AuthenticationException;
+use MailGlyph\Exceptions\MailGlyphException;
+use MailGlyph\Exceptions\NotFoundException;
+use MailGlyph\Exceptions\RateLimitException;
+use MailGlyph\Exceptions\ValidationException;
 use Psr\Http\Message\ResponseInterface;
 
 final class HttpClient
 {
-    private const DEFAULT_BASE_URL = 'https://api.mailrify.com';
+    private const DEFAULT_BASE_URL = 'https://api.mailglyph.com';
 
     private const DEFAULT_TIMEOUT_MS = 30000;
 
@@ -50,7 +50,7 @@ final class HttpClient
         $version = isset($config['version']) ? (string) $config['version'] : '0.2.0';
         $this->userAgent = isset($config['userAgent'])
             ? (string) $config['userAgent']
-            : sprintf('mailrify-php/%s', $version);
+            : sprintf('mailglyph-php/%s', $version);
 
         $this->maxRetries = isset($config['maxRetries'])
             ? max(0, (int) $config['maxRetries'])
@@ -90,7 +90,7 @@ final class HttpClient
      *
      * @return array<string, mixed>
      *
-     * @throws MailrifyException
+     * @throws MailGlyphException
      */
     public function request(string $method, string $path, array $options = []): array
     {
@@ -239,7 +239,7 @@ final class HttpClient
     /**
      * @param array<string, mixed> $responseData
      */
-    private function mapException(int $statusCode, array $responseData): MailrifyException
+    private function mapException(int $statusCode, array $responseData): MailGlyphException
     {
         $message = $this->extractErrorMessage($responseData);
 
@@ -272,7 +272,7 @@ final class HttpClient
             }
         }
 
-        return 'Mailrify API request failed';
+        return 'MailGlyph API request failed';
     }
 
     private function shouldRetry(int $statusCode): bool

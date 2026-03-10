@@ -15,6 +15,6 @@
     </testsuites>
 
     <php>
-        <env name="MAILRIFY_BASE_URL" value="https://api.mailrify.com"/>
+        <env name="MAILGLYPH_BASE_URL" value="https://api.mailglyph.com"/>
     </php>
 </phpunit>

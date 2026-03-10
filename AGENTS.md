@@ -1,7 +1,7 @@
 # AGENTS.md
 
 ## Project
-This is the official Mailrify PHP SDK. See `docs/` for the full specification.
+This is the official MailGlyph PHP SDK. See `docs/` for the full specification.
 
 ## Context Files (read these FIRST)
 1. [docs/sdk-plan.md] — Shared API spec, endpoints, auth, errors, testing strategy
@@ -12,7 +12,7 @@ This is the official Mailrify PHP SDK. See `docs/` for the full specification.
 1. Scaffold: `composer.json`, PSR-4 dirs, `.gitignore`, `phpunit.xml`
 2. Error classes (`src/Exceptions/`)
 3. HttpClient (`src/HttpClient.php`) — Guzzle, auth, retry, error parsing
-4. Client (`src/Mailrify.php`) — entry point with resource namespaces
+4. Client (`src/MailGlyph.php`) — entry point with resource namespaces
 5. Resources one at a time with tests: Emails → Events → Contacts → Campaigns → Segments
 6. CI: .github/workflows/ci.yml, release-please.yml
 7. README with install + usage examples

@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Mailrify\Tests\Integration;
+namespace MailGlyph\Tests\Integration;
 
-use Mailrify\Exceptions\MailrifyException;
-use Mailrify\Exceptions\NotFoundException;
-use Mailrify\HttpClient;
-use Mailrify\Mailrify;
+use MailGlyph\Exceptions\MailGlyphException;
+use MailGlyph\Exceptions\NotFoundException;
+use MailGlyph\HttpClient;
+use MailGlyph\MailGlyph;
 use PHPUnit\Framework\TestCase;
 use Throwable;
 
@@ -16,25 +16,25 @@ final class ApiTest extends TestCase
 {
     public function testLocalApiIntegrationScenariosInOrder(): void
     {
-        $apiKey = getenv('MAILRIFY_API_KEY');
+        $apiKey = getenv('MAILGLYPH_API_KEY');
         if ($apiKey === false || $apiKey === '') {
-            self::markTestSkipped('Set MAILRIFY_API_KEY to run integration tests.');
+            self::markTestSkipped('Set MAILGLYPH_API_KEY to run integration tests.');
         }
 
-        $publicKey = getenv('MAILRIFY_PUBLIC_KEY');
+        $publicKey = getenv('MAILGLYPH_PUBLIC_KEY');
         if ($publicKey === false || $publicKey === '') {
-            self::markTestSkipped('Set MAILRIFY_PUBLIC_KEY to run integration tests.');
+            self::markTestSkipped('Set MAILGLYPH_PUBLIC_KEY to run integration tests.');
         }
 
-        $baseUrl = getenv('MAILRIFY_BASE_URL');
-        $domain = getenv('MAILRIFY_TEST_DOMAIN');
-        $memberEmail = getenv('MAILRIFY_TEST_MEMBER_EMAIL');
+        $baseUrl = getenv('MAILGLYPH_BASE_URL');
+        $domain = getenv('MAILGLYPH_TEST_DOMAIN');
+        $memberEmail = getenv('MAILGLYPH_TEST_MEMBER_EMAIL');
 
-        $resolvedBaseUrl = $baseUrl !== false && $baseUrl !== '' ? $baseUrl : 'https://api.mailrify.com';
-        $resolvedDomain = $domain !== false && $domain !== '' ? $domain : 'mailrify.com';
+        $resolvedBaseUrl = $baseUrl !== false && $baseUrl !== '' ? $baseUrl : 'https://api.mailglyph.com';
+        $resolvedDomain = $domain !== false && $domain !== '' ? $domain : 'mailglyph.com';
 
-        $secretClient = new Mailrify((string) $apiKey, ['baseUrl' => $resolvedBaseUrl]);
-        $publicClient = new Mailrify((string) $publicKey, ['baseUrl' => $resolvedBaseUrl]);
+        $secretClient = new MailGlyph((string) $apiKey, ['baseUrl' => $resolvedBaseUrl]);
+        $publicClient = new MailGlyph((string) $publicKey, ['baseUrl' => $resolvedBaseUrl]);
         $cleanupHttpClient = new HttpClient((string) $apiKey, ['baseUrl' => $resolvedBaseUrl, 'maxRetries' => 1]);
 
         $suffix = sprintf('%d%s', time(), bin2hex(random_bytes(4)));
@@ -51,7 +51,7 @@ final class ApiTest extends TestCase
             $sendResult = $this->runStep('1. Email — Send', static function () use ($secretClient, $testRecipient): mixed {
                 return $secretClient->emails->send([
                     'to' => $testRecipient,
-                    'from' => 'sdk-test@mailrify.com',
+                    'from' => 'sdk-test@mailglyph.com',
                     'subject' => 'SDK Integration Test',
                     'body' => '<p>Test</p>',
                 ]);
@@ -132,7 +132,7 @@ final class ApiTest extends TestCase
                     'name' => sprintf('SDK Test Campaign %s', $suffix),
                     'subject' => 'Test',
                     'body' => '<p>Test</p>',
-                    'from' => 'sdk-test@mailrify.com',
+                    'from' => 'sdk-test@mailglyph.com',
                     'audienceType' => 'ALL',
                 ]);
             });
@@ -193,7 +193,7 @@ final class ApiTest extends TestCase
             $segments = $this->runStep('7.4 Segments — List', static function () use ($secretClient): mixed {
                 return $secretClient->segments->list();
             });
-            $segmentIds = array_map(static fn ($item): string => $item->id, $segments);
+            $segmentIds = array_map(static fn($item): string => $item->id, $segments);
             self::assertContains((string) $createdSegmentId, $segmentIds, 'Step 7.4 failed: created segment not found in list.');
 
             $segmentContacts = $this->runStep('7.5 Segments — List contacts', static function () use ($secretClient, &$createdSegmentId): mixed {
@@ -221,7 +221,7 @@ final class ApiTest extends TestCase
 
         try {
             $result = $action();
-        } catch (MailrifyException $exception) {
+        } catch (MailGlyphException $exception) {
             $status = $exception->getStatusCode();
             $responseBody = json_encode($exception->getErrorData(), JSON_UNESCAPED_SLASHES);
             $this->fail(sprintf(
@@ -246,7 +246,7 @@ final class ApiTest extends TestCase
     }
 
     private function cleanupResources(
-        Mailrify $secretClient,
+        MailGlyph $secretClient,
         HttpClient $cleanupHttpClient,
         ?string $contactId,
         ?string $segmentId,
@@ -275,7 +275,7 @@ final class ApiTest extends TestCase
                 $this->logStep(sprintf('[CLEANUP] attempting campaign delete %s', $campaignId));
                 $cleanupHttpClient->request('DELETE', sprintf('/campaigns/%s', rawurlencode($campaignId)));
                 $this->logStep(sprintf('[CLEANUP] campaign deleted %s', $campaignId));
-            } catch (MailrifyException $exception) {
+            } catch (MailGlyphException $exception) {
                 $status = $exception->getStatusCode();
                 $this->logStep(sprintf(
                     '[CLEANUP] campaign delete not supported or failed (status=%s, message=%s)',

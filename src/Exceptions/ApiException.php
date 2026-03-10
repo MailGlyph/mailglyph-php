@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-namespace Mailrify\Exceptions;
+namespace MailGlyph\Exceptions;
 
-class ApiException extends MailrifyException
+class ApiException extends MailGlyphException
 {
 }

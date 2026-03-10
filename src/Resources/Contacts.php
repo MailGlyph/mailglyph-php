@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Mailrify\Resources;
+namespace MailGlyph\Resources;
 
-use Mailrify\HttpClient;
-use Mailrify\Models\Contact;
+use MailGlyph\HttpClient;
+use MailGlyph\Models\Contact;
 
 final class Contacts
 {
@@ -26,7 +26,7 @@ final class Contacts
 
         $contactsPayload = is_array($response['contacts'] ?? null) ? $response['contacts'] : [];
         $contacts = array_map(
-            static fn (mixed $item): Contact => Contact::fromArray(is_array($item) ? $item : []),
+            static fn(mixed $item): Contact => Contact::fromArray(is_array($item) ? $item : []),
             $contactsPayload
         );
 
@@ -98,7 +98,7 @@ final class Contacts
     {
         return array_filter(
             $params,
-            static fn (mixed $value): bool => $value !== null
+            static fn(mixed $value): bool => $value !== null
         );
     }
 }

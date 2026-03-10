@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Mailrify\Tests\Unit;
+namespace MailGlyph\Tests\Unit;
 
 use GuzzleHttp\Psr7\Response;
-use Mailrify\Exceptions\NotFoundException;
-use Mailrify\Resources\Contacts;
+use MailGlyph\Exceptions\NotFoundException;
+use MailGlyph\Resources\Contacts;
 use PHPUnit\Framework\TestCase;
 
 final class ContactsTest extends TestCase

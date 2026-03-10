@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-namespace Mailrify\Exceptions;
+namespace MailGlyph\Exceptions;
 
-class NotFoundException extends MailrifyException
+class NotFoundException extends MailGlyphException
 {
 }

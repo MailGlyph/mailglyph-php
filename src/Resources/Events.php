@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Mailrify\Resources;
+namespace MailGlyph\Resources;
 
-use Mailrify\HttpClient;
-use Mailrify\Models\TrackEventResult;
+use MailGlyph\HttpClient;
+use MailGlyph\Models\TrackEventResult;
 
 final class Events
 {

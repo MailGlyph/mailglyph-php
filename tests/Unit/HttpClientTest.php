@@ -2,21 +2,21 @@
 
 declare(strict_types=1);
 
-namespace Mailrify\Tests\Unit;
+namespace MailGlyph\Tests\Unit;
 
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Middleware;
 use GuzzleHttp\Psr7\Response;
-use Mailrify\Exceptions\ApiException;
-use Mailrify\Exceptions\AuthenticationException;
-use Mailrify\Exceptions\MailrifyException;
-use Mailrify\Exceptions\NotFoundException;
-use Mailrify\Exceptions\RateLimitException;
-use Mailrify\Exceptions\ValidationException;
-use Mailrify\HttpClient;
-use Mailrify\Tests\Unit\Support\RecordingClient;
-use Mailrify\Tests\Unit\Support\SequenceClient;
+use MailGlyph\Exceptions\ApiException;
+use MailGlyph\Exceptions\AuthenticationException;
+use MailGlyph\Exceptions\MailGlyphException;
+use MailGlyph\Exceptions\NotFoundException;
+use MailGlyph\Exceptions\RateLimitException;
+use MailGlyph\Exceptions\ValidationException;
+use MailGlyph\HttpClient;
+use MailGlyph\Tests\Unit\Support\RecordingClient;
+use MailGlyph\Tests\Unit\Support\SequenceClient;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\RequestInterface;
 
@@ -31,7 +31,7 @@ final class HttpClientTest extends TestCase
 
         $client = new HttpClient('sk_secret', [
             'handler' => $stack,
-            'userAgent' => 'mailrify-php/test',
+            'userAgent' => 'mailglyph-php/test',
         ]);
 
         $client->request('GET', '/contacts');
@@ -39,7 +39,7 @@ final class HttpClientTest extends TestCase
         /** @var RequestInterface $request */
         $request = $history[0]['request'];
         self::assertSame('Bearer sk_secret', $request->getHeaderLine('Authorization'));
-        self::assertSame('mailrify-php/test', $request->getHeaderLine('User-Agent'));
+        self::assertSame('mailglyph-php/test', $request->getHeaderLine('User-Agent'));
         self::assertSame('application/json', $request->getHeaderLine('Content-Type'));
     }
 
@@ -64,7 +64,7 @@ final class HttpClientTest extends TestCase
             try {
                 $client->request('GET', '/contacts');
                 self::fail('Expected exception for status ' . $status);
-            } catch (MailrifyException $exception) {
+            } catch (MailGlyphException $exception) {
                 self::assertInstanceOf($expectedException, $exception);
                 self::assertSame($status, $exception->getStatusCode());
             }
@@ -125,14 +125,14 @@ final class HttpClientTest extends TestCase
 
         $client = new HttpClient('sk_secret', [
             'handler' => $stack,
-            'baseUrl' => 'https://staging.mailrify.test',
+            'baseUrl' => 'https://staging.mailglyph.test',
         ]);
 
         $client->request('GET', '/contacts');
 
         /** @var RequestInterface $request */
         $request = $history[0]['request'];
-        self::assertSame('staging.mailrify.test', $request->getUri()->getHost());
+        self::assertSame('staging.mailglyph.test', $request->getUri()->getHost());
     }
 
     public function testAppliesTimeoutOption(): void

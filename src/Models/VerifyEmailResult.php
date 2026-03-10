@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Mailrify\Models;
+namespace MailGlyph\Models;
 
 final class VerifyEmailResult
 {

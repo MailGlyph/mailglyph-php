@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Mailrify\Tests\Unit;
+namespace MailGlyph\Tests\Unit;
 
 use GuzzleHttp\Psr7\Response;
-use Mailrify\Exceptions\AuthenticationException;
-use Mailrify\Resources\Events;
+use MailGlyph\Exceptions\AuthenticationException;
+use MailGlyph\Resources\Events;
 use PHPUnit\Framework\TestCase;
 
 final class EventsTest extends TestCase
