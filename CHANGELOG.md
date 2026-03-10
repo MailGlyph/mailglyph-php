@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.1](https://github.com/MailGlyph/mailglyph-php/compare/v1.2.0...v1.2.1) (2026-03-10)
+
+
+### Miscellaneous Chores
+
+* trigger packagist ([d2bb99a](https://github.com/MailGlyph/mailglyph-php/commit/d2bb99a24fdce03379fa03ae491e628296129a3c))
+
 ## [1.2.0](https://github.com/Mailrify/mailrify-php/compare/v1.1.0...v1.2.0) (2026-03-02)
 
 
