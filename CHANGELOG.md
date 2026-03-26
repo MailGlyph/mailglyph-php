@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.0](https://github.com/MailGlyph/mailglyph-php/compare/v1.2.1...v1.3.0) (2026-03-26)
+
+
+### Features
+
+* add Templates resource and update OpenAPI spec with enhanced schemas for Contacts, Templates, and Campaigns ([9ede4a8](https://github.com/MailGlyph/mailglyph-php/commit/9ede4a8b1ca504ff4278f9fd7fb129822bb0405e))
+
 ## [Unreleased]
 
 ### ⚠ BREAKING CHANGES
