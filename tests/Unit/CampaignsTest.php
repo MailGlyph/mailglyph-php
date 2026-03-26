@@ -192,23 +192,53 @@ final class CampaignsTest extends TestCase
     public function testSendImmediate(): void
     {
         $history = [];
-        $client = $this->buildHttpClient('sk_test', [new Response(200)], $history);
+        $client = $this->buildHttpClient('sk_test', [
+            new Response(200, [], json_encode([
+                'success' => true,
+                'data' => [
+                    'id' => 'cmp_1',
+                    'name' => 'Launch',
+                    'subject' => 'Hello',
+                    'audienceType' => 'ALL',
+                    'status' => 'SENDING',
+                ],
+                'message' => 'Campaign is sending',
+            ], JSON_THROW_ON_ERROR)),
+        ], $history);
 
         $campaigns = new Campaigns($client);
-        self::assertTrue($campaigns->send('cmp_1'));
+        $result = $campaigns->send('cmp_1');
+
+        self::assertTrue($result['success']);
+        self::assertSame('cmp_1', $result['data']->id);
+        self::assertSame('Campaign is sending', $result['message']);
         self::assertSame('', (string) $history[0]['request']->getBody());
     }
 
     public function testSendScheduledWithIsoDate(): void
     {
         $history = [];
-        $client = $this->buildHttpClient('sk_test', [new Response(200)], $history);
+        $client = $this->buildHttpClient('sk_test', [
+            new Response(200, [], json_encode([
+                'success' => true,
+                'data' => [
+                    'id' => 'cmp_1',
+                    'name' => 'Launch',
+                    'subject' => 'Hello',
+                    'audienceType' => 'ALL',
+                    'status' => 'SCHEDULED',
+                    'scheduledFor' => '2026-03-01T10:00:00Z',
+                ],
+                'message' => 'Campaign scheduled',
+            ], JSON_THROW_ON_ERROR)),
+        ], $history);
 
         $campaigns = new Campaigns($client);
-        $campaigns->send('cmp_1', ['scheduledFor' => '2026-03-01T10:00:00Z']);
+        $result = $campaigns->send('cmp_1', ['scheduledFor' => '2026-03-01T10:00:00Z']);
 
         $payload = $this->getRequestJson($history);
         self::assertSame('2026-03-01T10:00:00Z', $payload['scheduledFor']);
+        self::assertSame('SCHEDULED', $result['data']->status);
     }
 
     public function testCancelScheduledCampaignReturnsCancelledStatus(): void

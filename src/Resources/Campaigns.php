@@ -76,8 +76,10 @@ final class Campaigns
 
     /**
      * @param array<string, mixed> $params
+     *
+     * @return array{success: bool, data: Campaign, message: string}
      */
-    public function send(string $id, array $params = []): bool
+    public function send(string $id, array $params = []): array
     {
         $options = [];
 
@@ -85,9 +87,14 @@ final class Campaigns
             $options['json'] = $params;
         }
 
-        $this->httpClient->request('POST', sprintf('/campaigns/%s/send', rawurlencode($id)), $options);
+        $response = $this->httpClient->request('POST', sprintf('/campaigns/%s/send', rawurlencode($id)), $options);
+        $data = is_array($response['data'] ?? null) ? $response['data'] : [];
 
-        return true;
+        return [
+            'success' => (bool) ($response['success'] ?? false),
+            'data' => Campaign::fromArray($data),
+            'message' => (string) ($response['message'] ?? ''),
+        ];
     }
 
     public function cancel(string $id): Campaign

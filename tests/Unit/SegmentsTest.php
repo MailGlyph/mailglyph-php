@@ -22,6 +22,7 @@ final class SegmentsTest extends TestCase
                     'id' => 'seg_1',
                     'name' => 'Premium',
                     'description' => 'Premium users',
+                    'type' => 'DYNAMIC',
                     'condition' => [
                         'logic' => 'AND',
                         'groups' => [
@@ -30,6 +31,9 @@ final class SegmentsTest extends TestCase
                     ],
                     'trackMembership' => true,
                     'memberCount' => 10,
+                    'projectId' => 'pr_1',
+                    'createdAt' => '2026-01-01T00:00:00Z',
+                    'updatedAt' => '2026-01-01T00:00:00Z',
                 ],
             ], JSON_THROW_ON_ERROR)),
         ], $history);
@@ -38,6 +42,7 @@ final class SegmentsTest extends TestCase
         $result = $segments->list();
 
         self::assertSame('seg_1', $result[0]->id);
+        self::assertSame('DYNAMIC', $result[0]->type);
     }
 
     public function testCreateWithConditions(): void
@@ -48,6 +53,7 @@ final class SegmentsTest extends TestCase
                 'id' => 'seg_1',
                 'name' => 'Premium',
                 'description' => 'Premium users',
+                'type' => 'DYNAMIC',
                 'condition' => [
                     'logic' => 'AND',
                     'groups' => [
@@ -56,6 +62,9 @@ final class SegmentsTest extends TestCase
                 ],
                 'trackMembership' => true,
                 'memberCount' => 0,
+                'projectId' => 'pr_1',
+                'createdAt' => '2026-01-01T00:00:00Z',
+                'updatedAt' => '2026-01-01T00:00:00Z',
             ], JSON_THROW_ON_ERROR)),
         ], $history);
 
@@ -81,6 +90,7 @@ final class SegmentsTest extends TestCase
                 'id' => 'seg_1',
                 'name' => 'Premium',
                 'description' => null,
+                'type' => 'STATIC',
                 'condition' => [
                     'logic' => 'AND',
                     'groups' => [
@@ -89,6 +99,9 @@ final class SegmentsTest extends TestCase
                 ],
                 'trackMembership' => true,
                 'memberCount' => 10,
+                'projectId' => 'pr_1',
+                'createdAt' => '2026-01-01T00:00:00Z',
+                'updatedAt' => '2026-01-01T00:00:00Z',
             ], JSON_THROW_ON_ERROR)),
         ], $history);
 
@@ -119,6 +132,7 @@ final class SegmentsTest extends TestCase
                 'id' => 'seg_1',
                 'name' => 'Premium+',
                 'description' => null,
+                'type' => 'DYNAMIC',
                 'condition' => [
                     'logic' => 'OR',
                     'groups' => [
@@ -127,6 +141,9 @@ final class SegmentsTest extends TestCase
                 ],
                 'trackMembership' => false,
                 'memberCount' => 5,
+                'projectId' => 'pr_1',
+                'createdAt' => '2026-01-01T00:00:00Z',
+                'updatedAt' => '2026-01-02T00:00:00Z',
             ], JSON_THROW_ON_ERROR)),
         ], $history);
 
@@ -140,7 +157,8 @@ final class SegmentsTest extends TestCase
             ],
         ]);
 
-        self::assertSame('OR', $segment->condition['logic']);
+        self::assertIsArray($segment->condition);
+        self::assertSame('OR', $segment->condition['logic'] ?? null);
     }
 
     public function testDeleteSuccess(): void
@@ -163,6 +181,9 @@ final class SegmentsTest extends TestCase
                         'email' => 'a@example.com',
                         'subscribed' => true,
                         'data' => [],
+                        'status' => 'ACTIVE',
+                        'expiresAt' => null,
+                        'projectId' => 'pr_1',
                         'createdAt' => '2026-01-01T00:00:00Z',
                         'updatedAt' => '2026-01-01T00:00:00Z',
                     ]
@@ -177,7 +198,7 @@ final class SegmentsTest extends TestCase
         $segments = new Segments($client);
         $result = $segments->listContacts('seg_1');
 
-        self::assertSame('ct_1', $result['contacts'][0]->id);
+        self::assertSame('ct_1', $result['data'][0]->id);
         self::assertSame(1, $result['total']);
     }
 
@@ -244,5 +265,30 @@ final class SegmentsTest extends TestCase
         self::assertSame('/segments/seg_1/members', $request->getUri()->getPath());
         self::assertSame(['alice@example.com'], $payload['emails']);
         self::assertSame(1, $result['removed']);
+    }
+
+    public function testSegmentConditionCanBeNull(): void
+    {
+        $history = [];
+        $client = $this->buildHttpClient('sk_test', [
+            new Response(200, [], json_encode([
+                'id' => 'seg_1',
+                'name' => 'Static Segment',
+                'description' => null,
+                'type' => 'STATIC',
+                'condition' => null,
+                'trackMembership' => false,
+                'memberCount' => 1,
+                'projectId' => 'pr_1',
+                'createdAt' => '2026-01-01T00:00:00Z',
+                'updatedAt' => '2026-01-01T00:00:00Z',
+            ], JSON_THROW_ON_ERROR)),
+        ], $history);
+
+        $segments = new Segments($client);
+        $segment = $segments->get('seg_1');
+
+        self::assertNull($segment->condition);
+        self::assertSame('STATIC', $segment->type);
     }
 }

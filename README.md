@@ -96,6 +96,7 @@ $eventNames = $client->events->listNames();
 <?php
 
 $contactsPage = $client->contacts->list(['limit' => 50]);
+// $contactsPage = ['data' => Contact[], 'cursor' => ?string, 'hasMore' => bool, 'total' => ?int]
 
 $contact = $client->contacts->create([
     'email' => 'new@example.com',
@@ -141,6 +142,7 @@ $updatedSegment = $client->segments->update($segment->id, [
 ]);
 
 $members = $client->segments->listContacts($segment->id, ['page' => 1, 'pageSize' => 20]);
+// $members = ['data' => Contact[], 'total' => int, 'page' => int, 'pageSize' => int, 'totalPages' => int]
 
 // Static segment membership management
 $addResult = $client->segments->addStaticMembers($segment->id, [
@@ -178,10 +180,11 @@ $updatedCampaign = $client->campaigns->update($campaign->id, [
 ]);
 
 // Immediate send
-$client->campaigns->send($campaign->id);
+$sendResult = $client->campaigns->send($campaign->id);
+// ['success' => bool, 'data' => Campaign, 'message' => string]
 
 // Scheduled send
-$client->campaigns->send($campaign->id, [
+$scheduledResult = $client->campaigns->send($campaign->id, [
     'scheduledFor' => '2026-03-01T10:00:00Z',
 ]);
 
@@ -193,6 +196,26 @@ $stats = $client->campaigns->stats($campaign->id);
 
 // Cancel
 $client->campaigns->cancel($campaign->id);
+```
+
+## Templates
+
+```php
+<?php
+
+$templatesPage = $client->templates->list(['limit' => 20, 'type' => 'TRANSACTIONAL']);
+// ['data' => Template[], 'total' => int, 'page' => int, 'pageSize' => int, 'totalPages' => int]
+
+$template = $client->templates->create([
+    'name' => 'Welcome',
+    'subject' => 'Welcome!',
+    'body' => '<h1>Welcome</h1>',
+    'type' => 'TRANSACTIONAL',
+]);
+
+$singleTemplate = $client->templates->get($template->id);
+$updatedTemplate = $client->templates->update($template->id, ['name' => 'Welcome v2']);
+$client->templates->delete($template->id);
 ```
 
 ## Error Handling

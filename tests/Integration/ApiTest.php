@@ -200,7 +200,7 @@ final class ApiTest extends TestCase
                 return $secretClient->segments->listContacts((string) $createdSegmentId, ['page' => 1, 'pageSize' => 10]);
             });
             self::assertIsArray($segmentContacts, 'Step 7.5 failed: expected paginated segment contacts result.');
-            self::assertArrayHasKey('contacts', $segmentContacts, 'Step 7.5 failed: missing contacts key.');
+            self::assertArrayHasKey('data', $segmentContacts, 'Step 7.5 failed: missing data key.');
 
             $deleteSegmentResult = $this->runStep('7.6 Segments — Delete', static function () use ($secretClient, &$createdSegmentId): mixed {
                 return $secretClient->segments->delete((string) $createdSegmentId);

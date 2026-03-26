@@ -1,5 +1,25 @@
 # Changelog
 
+## [Unreleased]
+
+### ⚠ BREAKING CHANGES
+
+* `contacts.list()` now returns the array under `data` instead of `contacts`.
+* `segments.listContacts()` now returns the array under `data` instead of `contacts`.
+* `campaigns.send()` now returns `['success' => bool, 'data' => Campaign, 'message' => string]` instead of `bool`.
+
+### Features
+
+* add `templates` resource (`list/create/get/update/delete`) and `Template` model.
+* align `Contact` model with schema fields: `status`, `expiresAt`, `projectId`, nullable `data`.
+* align `Segment` model with schema fields: `type`, nullable `condition`, `projectId`, `createdAt`, `updatedAt`.
+
+### Bug Fixes
+
+* parse `GET /contacts` list payload from `data` with cursor pagination fields.
+* parse `GET /templates` list payload from `data` with page pagination fields.
+* parse `POST /campaigns/{id}/send` payload including `success`, `data`, and `message`.
+
 ## [1.2.1](https://github.com/MailGlyph/mailglyph-php/compare/v1.2.0...v1.2.1) (2026-03-10)
 
 

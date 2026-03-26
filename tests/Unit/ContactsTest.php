@@ -18,12 +18,15 @@ final class ContactsTest extends TestCase
         $history = [];
         $client = $this->buildHttpClient('sk_test', [
             new Response(200, [], json_encode([
-                'contacts' => [
+                'data' => [
                     [
                         'id' => 'ct_1',
                         'email' => 'a@example.com',
                         'subscribed' => true,
                         'data' => [],
+                        'status' => 'ACTIVE',
+                        'expiresAt' => null,
+                        'projectId' => 'pr_1',
                         'createdAt' => '2026-01-01T00:00:00Z',
                         'updatedAt' => '2026-01-01T00:00:00Z',
                     ],
@@ -37,7 +40,7 @@ final class ContactsTest extends TestCase
         $contacts = new Contacts($client);
         $result = $contacts->list(['limit' => 1]);
 
-        self::assertSame('ct_1', $result['contacts'][0]->id);
+        self::assertSame('ct_1', $result['data'][0]->id);
         self::assertSame('next_1', $result['cursor']);
         self::assertTrue($result['hasMore']);
         self::assertSame(100, $result['total']);
@@ -47,7 +50,7 @@ final class ContactsTest extends TestCase
     {
         $history = [];
         $client = $this->buildHttpClient('sk_test', [
-            new Response(200, [], json_encode(['contacts' => [], 'hasMore' => false], JSON_THROW_ON_ERROR)),
+            new Response(200, [], json_encode(['data' => [], 'hasMore' => false], JSON_THROW_ON_ERROR)),
         ], $history);
 
         $contacts = new Contacts($client);
@@ -74,6 +77,9 @@ final class ContactsTest extends TestCase
                 'email' => 'a@example.com',
                 'subscribed' => true,
                 'data' => ['firstName' => 'A'],
+                'status' => 'ACTIVE',
+                'expiresAt' => null,
+                'projectId' => 'pr_1',
                 'createdAt' => '2026-01-01T00:00:00Z',
                 'updatedAt' => '2026-01-01T00:00:00Z',
             ], JSON_THROW_ON_ERROR)),
@@ -83,6 +89,8 @@ final class ContactsTest extends TestCase
         $contact = $contacts->get('ct_1');
 
         self::assertSame('a@example.com', $contact->email);
+        self::assertSame('ACTIVE', $contact->status);
+        self::assertSame('pr_1', $contact->projectId);
     }
 
     public function testGetNotFoundThrowsException(): void
@@ -107,6 +115,9 @@ final class ContactsTest extends TestCase
                 'email' => 'new@example.com',
                 'subscribed' => true,
                 'data' => [],
+                'status' => 'ACTIVE',
+                'expiresAt' => null,
+                'projectId' => 'pr_1',
                 'createdAt' => '2026-01-01T00:00:00Z',
                 'updatedAt' => '2026-01-01T00:00:00Z',
                 '_meta' => ['isNew' => true, 'isUpdate' => false],
@@ -128,6 +139,9 @@ final class ContactsTest extends TestCase
                 'email' => 'existing@example.com',
                 'subscribed' => true,
                 'data' => [],
+                'status' => 'ACTIVE',
+                'expiresAt' => null,
+                'projectId' => 'pr_1',
                 'createdAt' => '2026-01-01T00:00:00Z',
                 'updatedAt' => '2026-01-02T00:00:00Z',
                 '_meta' => ['isNew' => false, 'isUpdate' => true],
@@ -149,6 +163,9 @@ final class ContactsTest extends TestCase
                 'email' => 'a@example.com',
                 'subscribed' => false,
                 'data' => [],
+                'status' => 'ACTIVE',
+                'expiresAt' => null,
+                'projectId' => 'pr_1',
                 'createdAt' => '2026-01-01T00:00:00Z',
                 'updatedAt' => '2026-01-03T00:00:00Z',
             ], JSON_THROW_ON_ERROR)),
@@ -171,6 +188,9 @@ final class ContactsTest extends TestCase
                 'email' => 'a@example.com',
                 'subscribed' => true,
                 'data' => ['plan' => 'premium'],
+                'status' => 'ACTIVE',
+                'expiresAt' => null,
+                'projectId' => 'pr_1',
                 'createdAt' => '2026-01-01T00:00:00Z',
                 'updatedAt' => '2026-01-03T00:00:00Z',
             ], JSON_THROW_ON_ERROR)),
@@ -179,7 +199,8 @@ final class ContactsTest extends TestCase
         $contacts = new Contacts($client);
         $contact = $contacts->update('ct_1', ['data' => ['plan' => 'premium']]);
 
-        self::assertSame('premium', $contact->data['plan']);
+        self::assertIsArray($contact->data);
+        self::assertSame('premium', $contact->data['plan'] ?? null);
     }
 
     public function testDeleteSuccess(): void
@@ -211,7 +232,7 @@ final class ContactsTest extends TestCase
         $history = [];
         $client = $this->buildHttpClient('sk_test', [
             new Response(200, [], json_encode([
-                'contacts' => [],
+                'data' => [],
                 'hasMore' => false,
                 'total' => 42,
             ], JSON_THROW_ON_ERROR)),
@@ -220,5 +241,30 @@ final class ContactsTest extends TestCase
         $contacts = new Contacts($client);
 
         self::assertSame(42, $contacts->count());
+    }
+
+    public function testContactDataCanBeNull(): void
+    {
+        $history = [];
+        $client = $this->buildHttpClient('sk_test', [
+            new Response(200, [], json_encode([
+                'id' => 'ct_1',
+                'email' => 'a@example.com',
+                'subscribed' => true,
+                'data' => null,
+                'status' => 'PENDING',
+                'expiresAt' => '2026-01-10T00:00:00Z',
+                'projectId' => 'pr_1',
+                'createdAt' => '2026-01-01T00:00:00Z',
+                'updatedAt' => '2026-01-01T00:00:00Z',
+            ], JSON_THROW_ON_ERROR)),
+        ], $history);
+
+        $contacts = new Contacts($client);
+        $contact = $contacts->get('ct_1');
+
+        self::assertNull($contact->data);
+        self::assertSame('PENDING', $contact->status);
+        self::assertSame('2026-01-10T00:00:00Z', $contact->expiresAt);
     }
 }

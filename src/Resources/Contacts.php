@@ -16,7 +16,7 @@ final class Contacts
     /**
      * @param array<string, mixed> $params
      *
-     * @return array{contacts: list<Contact>, cursor: ?string, hasMore: bool, total: ?int}
+     * @return array{data: list<Contact>, cursor: ?string, hasMore: bool, total: ?int}
      */
     public function list(array $params = []): array
     {
@@ -24,14 +24,14 @@ final class Contacts
             'query' => $this->cleanParams($params),
         ]);
 
-        $contactsPayload = is_array($response['contacts'] ?? null) ? $response['contacts'] : [];
+        $contactsPayload = is_array($response['data'] ?? null) ? $response['data'] : [];
         $contacts = array_map(
             static fn(mixed $item): Contact => Contact::fromArray(is_array($item) ? $item : []),
             $contactsPayload
         );
 
         return [
-            'contacts' => array_values($contacts),
+            'data' => array_values($contacts),
             'cursor' => isset($response['cursor']) ? (string) $response['cursor'] : null,
             'hasMore' => (bool) ($response['hasMore'] ?? false),
             'total' => isset($response['total']) ? (int) $response['total'] : null,
@@ -87,7 +87,7 @@ final class Contacts
             return $result['total'];
         }
 
-        return count($result['contacts']);
+        return count($result['data']);
     }
 
     /**

@@ -68,7 +68,7 @@ final class Segments
     /**
      * @param array<string, mixed> $params
      *
-     * @return array{contacts: list<Contact>, total: int, page: int, pageSize: int, totalPages: int}
+     * @return array{data: list<Contact>, total: int, page: int, pageSize: int, totalPages: int}
      */
     public function listContacts(string $id, array $params = []): array
     {
@@ -83,7 +83,7 @@ final class Segments
         );
 
         return [
-            'contacts' => array_values($contacts),
+            'data' => array_values($contacts),
             'total' => (int) ($response['total'] ?? 0),
             'page' => (int) ($response['page'] ?? 1),
             'pageSize' => (int) ($response['pageSize'] ?? 0),
