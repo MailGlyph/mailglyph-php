@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.0](https://github.com/MailGlyph/mailglyph-php/compare/v1.3.0...v1.4.0) (2026-06-19)
+
+
+### Features
+
+* Email validation ([c09fae5](https://github.com/MailGlyph/mailglyph-php/commit/c09fae5f86c3bcd08fd4044fe2d6231e7dd1451b))
+
 ## [1.3.0](https://github.com/MailGlyph/mailglyph-php/compare/v1.2.1...v1.3.0) (2026-03-26)
 
 
