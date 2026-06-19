@@ -10,8 +10,10 @@ use MailGlyph\Models\VerifyEmailResult;
 
 final class Emails
 {
-    public function __construct(private readonly HttpClient $httpClient)
-    {
+    public function __construct(
+        private readonly HttpClient $httpClient,
+        private readonly ?Verification $verification = null
+    ) {
     }
 
     /**
@@ -48,12 +50,6 @@ final class Emails
 
     public function verify(string $email): VerifyEmailResult
     {
-        $response = $this->httpClient->request('POST', '/v1/verify', [
-            'json' => ['email' => $email],
-        ]);
-
-        $data = is_array($response['data'] ?? null) ? $response['data'] : [];
-
-        return VerifyEmailResult::fromArray($data);
+        return ($this->verification ?? new Verification($this->httpClient))->validate($email);
     }
 }

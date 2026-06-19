@@ -156,6 +156,75 @@ final class HttpClient
         }
     }
 
+    /**
+     * @param array<string, mixed> $options
+     *
+     * @throws MailGlyphException
+     */
+    public function requestRaw(string $method, string $path, array $options = []): ResponseInterface
+    {
+        $this->assertKeyAllowed($path);
+
+        $attempt = 0;
+
+        while (true) {
+            try {
+                $response = $this->client->request($method, $path, $this->buildOptions($options));
+                $statusCode = $response->getStatusCode();
+
+                if ($statusCode >= 200 && $statusCode < 300) {
+                    return $response;
+                }
+
+                $responseData = $this->decodeResponse($response);
+                $exception = $this->mapException($statusCode, $responseData);
+
+                if ($this->shouldRetry($statusCode) && $attempt < $this->maxRetries) {
+                    $this->sleepBeforeRetry($attempt, $response);
+                    $attempt++;
+
+                    continue;
+                }
+
+                throw $exception;
+            } catch (RequestException $exception) {
+                $statusCode = $exception->hasResponse() ? $exception->getResponse()?->getStatusCode() : null;
+
+                if ($statusCode !== null && $exception->hasResponse()) {
+                    $data = $this->decodeResponse($exception->getResponse());
+                    $mapped = $this->mapException($statusCode, $data);
+
+                    if ($this->shouldRetry($statusCode) && $attempt < $this->maxRetries) {
+                        $this->sleepBeforeRetry($attempt, $exception->getResponse());
+                        $attempt++;
+
+                        continue;
+                    }
+
+                    throw $mapped;
+                }
+
+                if ($attempt < $this->maxRetries) {
+                    $this->sleepBeforeRetry($attempt, null);
+                    $attempt++;
+
+                    continue;
+                }
+
+                throw new ApiException('Network request failed', null, [], $exception);
+            } catch (GuzzleException $exception) {
+                if ($attempt < $this->maxRetries) {
+                    $this->sleepBeforeRetry($attempt, null);
+                    $attempt++;
+
+                    continue;
+                }
+
+                throw new ApiException('HTTP client error', null, [], $exception);
+            }
+        }
+    }
+
     private function assertKeyAllowed(string $path): void
     {
         if ($this->keyType === 'invalid') {
@@ -194,9 +263,12 @@ final class HttpClient
         $headers = [
             'Authorization' => sprintf('Bearer %s', $this->apiKey),
             'Accept' => 'application/json',
-            'Content-Type' => 'application/json',
             'User-Agent' => $this->userAgent,
         ];
+
+        if (!isset($options['multipart'])) {
+            $headers['Content-Type'] = 'application/json';
+        }
 
         if (isset($options['headers']) && is_array($options['headers'])) {
             /** @var array<string, mixed> $customHeaders */

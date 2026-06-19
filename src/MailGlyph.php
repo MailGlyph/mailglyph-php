@@ -10,6 +10,7 @@ use MailGlyph\Resources\Emails;
 use MailGlyph\Resources\Events;
 use MailGlyph\Resources\Segments;
 use MailGlyph\Resources\Templates;
+use MailGlyph\Resources\Verification;
 
 final class MailGlyph
 {
@@ -25,6 +26,8 @@ final class MailGlyph
 
     public readonly Segments $segments;
 
+    public readonly Verification $verification;
+
     /**
      * @param array<string, mixed> $config
      */
@@ -35,7 +38,8 @@ final class MailGlyph
 
         $httpClient = new HttpClient($apiKey, $config);
 
-        $this->emails = new Emails($httpClient);
+        $this->verification = new Verification($httpClient);
+        $this->emails = new Emails($httpClient, $this->verification);
         $this->events = new Events($httpClient);
         $this->contacts = new Contacts($httpClient);
         $this->campaigns = new Campaigns($httpClient);

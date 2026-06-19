@@ -46,6 +46,8 @@ final class ApiTest extends TestCase
         $createdContactId = null;
         $createdSegmentId = null;
         $createdCampaignId = null;
+        $createdVerificationJobId = null;
+        $verificationFilePath = null;
 
         try {
             $sendResult = $this->runStep('1. Email — Send', static function () use ($secretClient, $testRecipient): mixed {
@@ -65,6 +67,65 @@ final class ApiTest extends TestCase
                 return $secretClient->emails->verify($testRecipient);
             });
             self::assertSame($testRecipient, $verifyResult->email, 'Step 2 failed: verify email field mismatch.');
+
+            $creditSummary = $this->runStep('2.1 Verification — Get credits', static function () use ($secretClient): mixed {
+                return $secretClient->verification->credits();
+            });
+            self::assertGreaterThanOrEqual(0, $creditSummary->balance, 'Step 2.1 failed: expected non-negative balance.');
+
+            $creditLedger = $this->runStep('2.2 Verification — List credit ledger', static function () use ($secretClient): mixed {
+                return $secretClient->verification->ledger(['limit' => 5]);
+            });
+            self::assertIsArray($creditLedger['items'], 'Step 2.2 failed: expected ledger items array.');
+
+            $verificationFilePath = $this->createVerificationFile($testRecipient);
+            $verificationJob = $this->runStep('2.3 Verification — Create bulk validation', static function () use ($secretClient, &$verificationFilePath): mixed {
+                return $secretClient->verification->createBulk((string) $verificationFilePath);
+            });
+            $createdVerificationJobId = $verificationJob->id;
+            self::assertSame(2, $verificationJob->localEmailCount, 'Step 2.3 failed: expected two uploaded emails.');
+
+            $bulkJobs = $this->runStep('2.4 Verification — List bulk validations', static function () use ($secretClient): mixed {
+                return $secretClient->verification->listBulk(['limit' => 20]);
+            });
+            self::assertIsArray($bulkJobs['items'], 'Step 2.4 failed: expected bulk job items array.');
+
+            $fetchedVerificationJob = $this->runStep('2.5 Verification — Get bulk validation', static function () use ($secretClient, &$createdVerificationJobId): mixed {
+                return $secretClient->verification->getBulk((string) $createdVerificationJobId);
+            });
+            self::assertSame((string) $createdVerificationJobId, $fetchedVerificationJob->id, 'Step 2.5 failed: job ID mismatch.');
+
+            if ($fetchedVerificationJob->status === 'ACTION_REQUIRED') {
+                $fetchedVerificationJob = $this->runStep('2.6 Verification — Continue bulk validation', static function () use ($secretClient, &$createdVerificationJobId): mixed {
+                    return $secretClient->verification->continueBulk((string) $createdVerificationJobId);
+                });
+                self::assertSame((string) $createdVerificationJobId, $fetchedVerificationJob->id, 'Step 2.6 failed: job ID mismatch.');
+            }
+
+            $completedVerificationJob = $this->runStep('2.7 Verification — Wait for bulk validation', function () use ($secretClient, &$createdVerificationJobId): mixed {
+                return $this->waitForVerificationJob($secretClient, (string) $createdVerificationJobId);
+            });
+            self::assertTrue(
+                $completedVerificationJob->readyForDownload,
+                sprintf(
+                    'Step 2.7 failed: job was not ready for download. Last status: %s',
+                    $completedVerificationJob->status
+                )
+            );
+
+            $download = $this->runStep('2.8 Verification — Download bulk results', static function () use ($secretClient, &$createdVerificationJobId): mixed {
+                return $secretClient->verification->downloadBulk((string) $createdVerificationJobId, [
+                    'filter' => 'all',
+                    'format' => 'csv',
+                ]);
+            });
+            self::assertStringContainsString('@', $download->contents, 'Step 2.8 failed: expected downloaded results.');
+
+            $refundedCredits = $this->runStep('2.9 Verification — Delete bulk validation', static function () use ($secretClient, &$createdVerificationJobId): mixed {
+                return $secretClient->verification->deleteBulk((string) $createdVerificationJobId);
+            });
+            self::assertGreaterThanOrEqual(0, $refundedCredits, 'Step 2.9 failed: expected non-negative refunded credits.');
+            $createdVerificationJobId = null;
 
             $trackResult = $this->runStep('3. Events — Track with pk_*', static function () use ($publicClient, $testRecipient): mixed {
                 return $publicClient->events->track([
@@ -208,7 +269,18 @@ final class ApiTest extends TestCase
             self::assertTrue($deleteSegmentResult, 'Step 7.6 failed: expected segment delete to return true.');
             $createdSegmentId = null;
         } finally {
-            $this->cleanupResources($secretClient, $cleanupHttpClient, $createdContactId, $createdSegmentId, $createdCampaignId);
+            if ($verificationFilePath !== null && $verificationFilePath !== '') {
+                @unlink($verificationFilePath);
+            }
+
+            $this->cleanupResources(
+                $secretClient,
+                $cleanupHttpClient,
+                $createdContactId,
+                $createdSegmentId,
+                $createdCampaignId,
+                $createdVerificationJobId
+            );
         }
     }
 
@@ -250,8 +322,18 @@ final class ApiTest extends TestCase
         HttpClient $cleanupHttpClient,
         ?string $contactId,
         ?string $segmentId,
-        ?string $campaignId
+        ?string $campaignId,
+        ?string $verificationJobId
     ): void {
+        if ($verificationJobId !== null && $verificationJobId !== '') {
+            try {
+                $this->logStep(sprintf('[CLEANUP] deleting verification job %s', $verificationJobId));
+                $secretClient->verification->deleteBulk($verificationJobId);
+            } catch (Throwable $exception) {
+                $this->logStep(sprintf('[CLEANUP] verification job delete failed: %s', $exception->getMessage()));
+            }
+        }
+
         if ($contactId !== null && $contactId !== '') {
             try {
                 $this->logStep(sprintf('[CLEANUP] deleting contact %s', $contactId));
@@ -286,5 +368,41 @@ final class ApiTest extends TestCase
                 $this->logStep(sprintf('[CLEANUP] campaign delete failed: %s', $exception->getMessage()));
             }
         }
+    }
+
+    private function createVerificationFile(string $testRecipient): string
+    {
+        $path = tempnam(sys_get_temp_dir(), 'mailglyph-verify-');
+
+        if ($path === false) {
+            self::fail('Unable to create temporary verification file.');
+        }
+
+        $csvPath = $path . '.csv';
+        rename($path, $csvPath);
+        file_put_contents($csvPath, sprintf("%s\n%s\n", $testRecipient, 'unknown@example.com'));
+
+        return $csvPath;
+    }
+
+    private function waitForVerificationJob(MailGlyph $client, string $jobId): mixed
+    {
+        $job = null;
+        $waitSeconds = getenv('MAILGLYPH_VERIFICATION_WAIT_SECONDS');
+        $maxWaitSeconds = $waitSeconds !== false && $waitSeconds !== '' ? max(5, (int) $waitSeconds) : 180;
+        $pollSeconds = 5;
+        $maxAttempts = (int) ceil($maxWaitSeconds / $pollSeconds);
+
+        for ($attempt = 0; $attempt < $maxAttempts; $attempt++) {
+            $job = $client->verification->getBulk($jobId);
+
+            if ($job->readyForDownload || $job->status === 'FAILED') {
+                return $job;
+            }
+
+            sleep($pollSeconds);
+        }
+
+        return $job;
     }
 }

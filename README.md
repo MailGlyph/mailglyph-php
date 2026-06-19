@@ -65,10 +65,49 @@ $client->emails->send([
     'text' => '',
 ]);
 
-// Verify email
+// Verify email (also available as $client->verification->validate(...))
 $verification = $client->emails->verify('user@example.com');
 var_dump($verification->valid);
+var_dump($verification->smtpStatus);
 var_dump($verification->isRandomInput);
+```
+
+## Email Verification
+
+```php
+<?php
+
+$verification = $client->verification->validate('user@example.com');
+var_dump($verification->valid);
+var_dump($verification->validationMethod);
+var_dump($verification->creditsConsumed);
+
+$job = $client->verification->createBulk(__DIR__ . '/emails.csv');
+
+$jobs = $client->verification->listBulk([
+    'limit' => 20,
+    'status' => 'COMPLETED',
+]);
+
+$job = $client->verification->getBulk($job->id);
+
+if ($job->status === 'ACTION_REQUIRED') {
+    $job = $client->verification->continueBulk($job->id);
+}
+
+if ($job->readyForDownload) {
+    $download = $client->verification->downloadBulk($job->id, [
+        'filter' => 'all',
+        'format' => 'csv',
+    ]);
+
+    file_put_contents($download->filename ?? 'verification-results.csv', $download->contents);
+}
+
+$refundedCredits = $client->verification->deleteBulk($job->id);
+
+$credits = $client->verification->credits();
+$ledger = $client->verification->ledger(['limit' => 25]);
 ```
 
 ## Events
